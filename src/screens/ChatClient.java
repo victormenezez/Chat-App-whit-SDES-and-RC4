@@ -85,7 +85,7 @@ public class ChatClient extends JFrame {
     
     private void networkConfig() throws IOException{
         try{
-            socket = new Socket("127.0.0.1", 5000);
+            socket = new Socket("127.0.0.1", 5354);
             printer = new PrintWriter(socket.getOutputStream());
             scanner = new Scanner(socket.getInputStream());
             new Thread(new ServerListener()).start();

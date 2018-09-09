@@ -19,7 +19,7 @@ public class ChatServer {
     public ChatServer() throws IOException{
         ServerSocket server;
         try{
-            server = new ServerSocket(5000);
+            server = new ServerSocket(5354);
             while(true){
                 Socket socket = server.accept();
                 new Thread(new ClientListener(socket)).start();
