@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 import javax.swing.*;
 
 /**
@@ -24,6 +25,25 @@ public class ChatClient extends JFrame {
     PrintWriter printer;
     Socket socket;
     String name;
+    JTextArea received_text;
+    Scanner scanner;
+    
+    private class ServerListener implements Runnable {
+
+        @Override
+        public void run() {
+            try{
+                String text;
+                while((text = scanner.nextLine()) != null){
+                    received_text.append(text + "\n");
+                }
+            }catch (Exception e){
+                
+            }
+            
+        }
+        
+    }
     
     public ChatClient(String name) throws IOException{
         super("Chat: " + name);
@@ -38,13 +58,19 @@ public class ChatClient extends JFrame {
         send.setLayout(new BorderLayout()); 
         send.add(BorderLayout.CENTER, text_to_send);
         send.add(BorderLayout.EAST, button);
-        getContentPane().add(BorderLayout.SOUTH, send);
         
+        received_text = new JTextArea();
+        received_text.setFont(font);
+        JScrollPane scroll = new JScrollPane(received_text);
+        
+        getContentPane().add(BorderLayout.CENTER, scroll);
+        getContentPane().add(BorderLayout.SOUTH, send);
+
         networkConfig();
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-        setSize(500, 90);
+        setSize(300, 500);
     }
     
     private class SendListener implements ActionListener{
@@ -61,6 +87,8 @@ public class ChatClient extends JFrame {
         try{
             socket = new Socket("127.0.0.1", 5000);
             printer = new PrintWriter(socket.getOutputStream());
+            scanner = new Scanner(socket.getInputStream());
+            new Thread(new ServerListener()).start();
         } catch(Exception e){}
     }
     
