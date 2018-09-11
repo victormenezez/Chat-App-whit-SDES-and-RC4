@@ -57,30 +57,5 @@ public class RC4 {
     public byte[] decrypt(final byte[] ciphertext) {
         return encrypt(ciphertext);
     }
- 
-    public static void main(String args[]) throws Exception {
-//        String keyword = "hello";
-//        byte[] keytest = keyword.getBytes(); //convert keyword to byte
-//
-//        String texto = "aloha, porra";
-//        byte[] text = texto.getBytes(); // text as 12345
-//        System.out.print("\nTexto original: ");
-//        for(byte b: text)
-//            System.out.print(b);
-//        
-//        RC4 rc4 = new RC4(keytest);
-//
-//        byte[] encrypt_text = rc4.encrypt(text);
-//        System.out.print("\nTexto encriptado: ");
-//        for(byte b: encrypt_text)
-//            System.out.print(b);
-//        
-//        rc4 = new RC4(keytest);
-//        byte[] backtext = rc4.encrypt(encrypt_text);
-//        System.out.print("\nTexto decriptado: ");
-//        for(byte b: backtext)
-//            System.out.print(b);
-//        
-//        System.out.print("\n"+new String(backtext, StandardCharsets.UTF_8));
-    }
+
 }

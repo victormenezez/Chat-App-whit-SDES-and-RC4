@@ -50,13 +50,10 @@ public class ChatServer {
                 String text;
                 while((text = scanner.nextLine()) != null){
                     System.out.println(text);
+                    
                     sendToAll(text);
                 }
             } catch(Exception e){}
         }
-    }
-    
-    public static void main(String[] args) throws IOException{
-        new ChatServer();
     }
 }

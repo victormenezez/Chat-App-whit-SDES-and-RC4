@@ -5,6 +5,7 @@
  */
 package screens;
 
+import encryption.RC4;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Font;
@@ -13,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import javax.swing.*;
 
@@ -27,7 +29,7 @@ public class ChatClient extends JFrame {
     String name;
     JTextArea received_text;
     Scanner scanner;
-    
+    RC4 rc4;
     private class ServerListener implements Runnable {
 
         @Override
@@ -35,7 +37,9 @@ public class ChatClient extends JFrame {
             try{
                 String text;
                 while((text = scanner.nextLine()) != null){
-                    received_text.append(text + "\n");
+                    byte[] decrypted = rc4.decrypt(stringToByteVector(text));
+                    System.out.println();
+                    received_text.append(new String(decrypted) + "\n");
                 }
             }catch (Exception e){
                 
@@ -68,6 +72,8 @@ public class ChatClient extends JFrame {
 
         networkConfig();
         
+        rc4 = new RC4("adamastorpitaco".getBytes());
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         setSize(300, 500);
@@ -76,7 +82,9 @@ public class ChatClient extends JFrame {
     private class SendListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            printer.println(name+": "+text_to_send.getText());
+            String original_text = name+": "+text_to_send.getText();
+            byte[] encrypted_message = original_text.getBytes();
+            printer.println( rc4.encrypt(encrypted_message));
             printer.flush();
             text_to_send.setText("");
             text_to_send.requestFocus();
@@ -92,8 +100,14 @@ public class ChatClient extends JFrame {
         } catch(Exception e){}
     }
     
-    public static void main(String[] args) throws IOException{
-        new ChatClient("Victor");
-        new ChatClient("Erick");        
+    
+    private byte[] stringToByteVector ( String mensagem ){
+        int index = 0;
+        byte[] byteMessage = new byte[ mensagem.length() ];
+        for(char c: mensagem.toCharArray()){
+           byteMessage[ index++ ] = (byte) c;
+        }
+        
+        return byteMessage;
     }
 }
