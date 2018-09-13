@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.*;
 
@@ -37,9 +38,19 @@ public class ChatClient extends JFrame {
             try{
                 String text;
                 while((text = scanner.nextLine()) != null){
-                    byte[] decrypted = rc4.decrypt(stringToByteVector(text));
-                    System.out.println();
-                    received_text.append(new String(decrypted) + "\n");
+                    rc4 = new RC4("adamastor".getBytes());
+
+                    String[] byteValues = text.substring(1, text.length() - 1).split(",");
+                    byte[] bytes = new byte[byteValues.length];
+
+                    for (int i=0, len=bytes.length; i<len; i++) {
+                       bytes[i] = Byte.parseByte(byteValues[i].trim());     
+                    }
+
+                    byte[] decrypted = rc4.decrypt(bytes);
+                    String message = new String( decrypted, StandardCharsets.UTF_8 );
+                    
+                    received_text.append( message + "\n");
                 }
             }catch (Exception e){
                 
@@ -71,23 +82,26 @@ public class ChatClient extends JFrame {
         getContentPane().add(BorderLayout.SOUTH, send);
 
         networkConfig();
-        
-        rc4 = new RC4("adamastorpitaco".getBytes());
-        
+                
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         setSize(300, 500);
+        printer.flush();
     }
     
     private class SendListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             String original_text = name+": "+text_to_send.getText();
-            byte[] encrypted_message = original_text.getBytes();
-            printer.println( rc4.encrypt(encrypted_message));
+            rc4 = new RC4("adamastor".getBytes());
+            byte[] encrypted_text = rc4.encrypt(original_text.getBytes());
+            String message = Arrays.toString(encrypted_text);
+//            System.out.println(message);
+            printer.println(message);
             printer.flush();
             text_to_send.setText("");
             text_to_send.requestFocus();
+            rc4 = new RC4("adamastor".getBytes());
         }
     }
     

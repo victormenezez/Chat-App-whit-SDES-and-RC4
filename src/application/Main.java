@@ -14,10 +14,12 @@ import screens.ChatServer;
  * @author victor
  */
 public class Main {
+    
     public static void main(String[] args) throws IOException {
         ChatServer server = new ChatServer();
         ChatClient c1 = new ChatClient("Erick");
         ChatClient c2 = new ChatClient("Victor");
+        
 
 //        String ai = "teste";
 //        byte[] ai_by = ai.getBytes();
