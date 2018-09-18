@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package screens;
 
 import encryption.Encryption;
@@ -87,7 +82,7 @@ public class ChatClient extends JFrame {
         networkConfig();
                 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
+//        setVisible(true);
         setSize(300, 500);
         printer.flush();
     }

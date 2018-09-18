@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package screens;
+package application;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,6 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import screens.ChatClient;
 
 public class ChatServer {
     
@@ -55,5 +51,13 @@ public class ChatServer {
                 }
             } catch(Exception e){}
         }
+    }
+    public static void main(String[] args) throws IOException {
+        new ChatServer();
+        ChatClient c1 = new ChatClient("Victor");
+        ChatClient c2 = new ChatClient("Erick");
+        
+        c1.setVisible(true);
+        c2.setVisible(true);
     }
 }
