@@ -5,14 +5,11 @@
  */
 package encryption;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-
 /**
  *
  * @author victor
  */
-public class RC4 {
+public class RC4 extends Encryption{
     private final byte[] S = new byte[256];
     private final byte[] T = new byte[256];
     private final int keylen;
@@ -38,6 +35,7 @@ public class RC4 {
         }
     }
 
+    @Override
     public byte[] encrypt(final byte[] plaintext) {
         final byte[] ciphertext = new byte[plaintext.length];
         int i = 0, j = 0, k, t;
@@ -54,19 +52,10 @@ public class RC4 {
         }
         return ciphertext;
     }
-
+    
+    @Override
     public byte[] decrypt(final byte[] ciphertext) {
         return encrypt(ciphertext);
     }
 
-    public static void main(String[] args) {
-        
-//        RC4 rc4 = new RC4("adamastor".getBytes());
-        
-//        String text = "U2FsdGVkX1+WbwWgfQ6O54XqCa72WJAzoEQ=";
-        
-//        System.out.println(Arrays.toString(rc4.decrypt("U2FsdGVkX1+WbwWgfQ6O54XqCa72WJAzoEQ=".getBytes())));
-        
-        
-    }
 }

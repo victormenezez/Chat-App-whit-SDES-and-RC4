@@ -5,6 +5,7 @@
  */
 package screens;
 
+import encryption.Encryption;
 import encryption.RC4;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -30,6 +31,9 @@ public class ChatClient extends JFrame {
     String name;
     JTextArea received_text;
     Scanner scanner;
+    Encryption encryption;
+    String mode = "";
+    byte[] key;
     RC4 rc4;
     private class ServerListener implements Runnable {
 
@@ -38,8 +42,8 @@ public class ChatClient extends JFrame {
             try{
                 String text;
                 while((text = scanner.nextLine()) != null){
-                    rc4 = new RC4("adamastor".getBytes());
-
+                    instanceEncryption(mode);
+                    
                     String[] byteValues = text.substring(1, text.length() - 1).split(",");
                     byte[] bytes = new byte[byteValues.length];
 
@@ -47,7 +51,7 @@ public class ChatClient extends JFrame {
                        bytes[i] = Byte.parseByte(byteValues[i].trim());     
                     }
 
-                    byte[] decrypted = rc4.decrypt(bytes);
+                    byte[] decrypted = encryption.decrypt(bytes);
                     String message = new String( decrypted, StandardCharsets.UTF_8 );
                     
                     received_text.append( message + "\n");
@@ -55,14 +59,13 @@ public class ChatClient extends JFrame {
             }catch (Exception e){
                 
             }
-            
         }
-        
     }
     
     public ChatClient(String name) throws IOException{
         super("Chat: " + name);
         this.name = name;
+        encryption = new Encryption();
         
         Font font = new Font("Serif", Font.PLAIN, 26);
         text_to_send = new JTextField();
@@ -93,15 +96,19 @@ public class ChatClient extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             String original_text = name+": "+text_to_send.getText();
-            rc4 = new RC4("adamastor".getBytes());
-            byte[] encrypted_text = rc4.encrypt(original_text.getBytes());
+            
+            changeEncryption(text_to_send.getText());
+            
+            instanceEncryption(mode);
+            
+            byte[] encrypted_text = encryption.encrypt(original_text.getBytes());
             String message = Arrays.toString(encrypted_text);
-//            System.out.println(message);
             printer.println(message);
             printer.flush();
             text_to_send.setText("");
             text_to_send.requestFocus();
-            rc4 = new RC4("adamastor".getBytes());
+            
+            instanceEncryption(mode);
         }
     }
     
@@ -115,13 +122,28 @@ public class ChatClient extends JFrame {
     }
     
     
-    private byte[] stringToByteVector ( String mensagem ){
-        int index = 0;
-        byte[] byteMessage = new byte[ mensagem.length() ];
-        for(char c: mensagem.toCharArray()){
-           byteMessage[ index++ ] = (byte) c;
+    private void instanceEncryption(String mode){
+        if(mode.equals("rc4")){
+            encryption = new RC4(key);
+            System.out.println(name+" Utilizando rc4");
+        }else if (mode.equals("") || mode.equals("nocipher")){
+            encryption = new Encryption();
+            System.out.println(name+" Sem criptografia");
         }
-        
-        return byteMessage;
+    }
+
+    private void changeEncryption(String original_text){
+        if(original_text.contains("#use rc4")){
+            String[] sp = original_text.split(" ");
+            key = sp[2].getBytes();
+            mode = "rc4";
+            System.out.println("modo rc4");
+            System.out.println("chave: "+sp[2]);
+        } else if (original_text.contains("#use sdes")){
+            //nothing to do yet
+        } else if (original_text.contains("#use nocipher")){
+            key = null;
+            mode = "";
+        }
     }
 }
