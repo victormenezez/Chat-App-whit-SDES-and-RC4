@@ -3,8 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/erickos/Documentos/IMD0703-Seguranca_de_Redes/Chat-App-whit-SDES-and-RC4/src/screens/ChatClient.java</file>
-            <file>file:/home/erickos/Documentos/IMD0703-Seguranca_de_Redes/Chat-App-whit-SDES-and-RC4/src/application/Main.java</file>
+            <file>file:/home/victor/NetBeansProjects/ChatApp/src/application/ChatServer.java</file>
+            <file>file:/home/victor/NetBeansProjects/ChatApp/src/screens/ChatClient.java</file>
+            <file>file:/home/victor/NetBeansProjects/ChatApp/src/encryption/RC4.java</file>
+            <file>file:/home/victor/NetBeansProjects/ChatApp/src/encryption/SDES.java</file>
+            <file>file:/home/victor/NetBeansProjects/ChatApp/src/encryption/Encryption.java</file>
         </group>
     </open-files>
 </project-private>

@@ -2,6 +2,7 @@ package screens;
 
 import encryption.Encryption;
 import encryption.RC4;
+import encryption.SDES;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Font;
@@ -30,6 +31,36 @@ public class ChatClient extends JFrame {
     String mode = "";
     byte[] key;
     RC4 rc4;
+    
+    public ChatClient(String name) throws IOException{
+        super("Chat: " + name);
+        this.name = name;
+        encryption = new Encryption();
+        
+        Font font = new Font("Serif", Font.PLAIN, 17);
+        text_to_send = new JTextField();
+        text_to_send.setFont(font);
+        JButton button = new JButton("Enviar");
+        button.addActionListener(new SendListener());
+        Container send = new JPanel();
+        send.setLayout(new BorderLayout()); 
+        send.add(BorderLayout.CENTER, text_to_send);
+        send.add(BorderLayout.EAST, button);
+        
+        received_text = new JTextArea();
+        received_text.setFont(font);
+        JScrollPane scroll = new JScrollPane(received_text);
+        
+        getContentPane().add(BorderLayout.CENTER, scroll);
+        getContentPane().add(BorderLayout.SOUTH, send);
+
+        networkConfig();
+                
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 500);
+        printer.flush();
+    }
+    
     private class ServerListener implements Runnable {
 
         @Override
@@ -57,35 +88,7 @@ public class ChatClient extends JFrame {
         }
     }
     
-    public ChatClient(String name) throws IOException{
-        super("Chat: " + name);
-        this.name = name;
-        encryption = new Encryption();
-        
-        Font font = new Font("Serif", Font.PLAIN, 26);
-        text_to_send = new JTextField();
-        text_to_send.setFont(font);
-        JButton button = new JButton("Enviar");
-        button.addActionListener(new SendListener());
-        Container send = new JPanel();
-        send.setLayout(new BorderLayout()); 
-        send.add(BorderLayout.CENTER, text_to_send);
-        send.add(BorderLayout.EAST, button);
-        
-        received_text = new JTextArea();
-        received_text.setFont(font);
-        JScrollPane scroll = new JScrollPane(received_text);
-        
-        getContentPane().add(BorderLayout.CENTER, scroll);
-        getContentPane().add(BorderLayout.SOUTH, send);
 
-        networkConfig();
-                
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        setVisible(true);
-        setSize(300, 500);
-        printer.flush();
-    }
     
     private class SendListener implements ActionListener{
         @Override
@@ -98,6 +101,7 @@ public class ChatClient extends JFrame {
             
             byte[] encrypted_text = encryption.encrypt(original_text.getBytes());
             String message = Arrays.toString(encrypted_text);
+            
             printer.println(message);
             printer.flush();
             text_to_send.setText("");
@@ -116,27 +120,43 @@ public class ChatClient extends JFrame {
         } catch(Exception e){}
     }
     
-    
     private void instanceEncryption(String mode){
-        if(mode.equals("rc4")){
-            encryption = new RC4(key);
-            System.out.println(name+" Utilizando rc4");
-        }else if (mode.equals("") || mode.equals("nocipher")){
-            encryption = new Encryption();
-            System.out.println(name+" Sem criptografia");
+        switch (mode) {
+            case "rc4":
+                encryption = new RC4(key);
+                //System.out.println(name+" Utilizando rc4");
+                break;
+            case "sdes":
+                encryption = new SDES(key);
+                //System.out.println(name+" Utilizando sdes");
+                break;
+            case "":
+            case "nocipher":
+                encryption = new Encryption();
+                //System.out.println(name+" Sem criptografia");
+                break;
+            default:
+                break;
         }
     }
 
     private void changeEncryption(String original_text){
+        String[] sp;
         if(original_text.contains("#use rc4")){
-            String[] sp = original_text.split(" ");
+            sp = original_text.split(" ");
             key = sp[2].getBytes();
             mode = "rc4";
-            System.out.println("modo rc4");
-            System.out.println("chave: "+sp[2]);
-        } else if (original_text.contains("#use sdes")){
-            //nothing to do yet
-        } else if (original_text.contains("#use nocipher")){
+            //System.out.println("modo rc4");
+            //System.out.println("chave: "+sp[2]);
+        } 
+        else if (original_text.contains("#use sdes")){
+            sp = original_text.split(" ");
+            key = sp[2].getBytes();
+            mode = "sdes";
+            //System.out.println("modo sdes");
+            //System.out.println("chave: "+sp[2]);
+        } 
+        else if (original_text.contains("#use nocipher")){
             key = null;
             mode = "";
         }
