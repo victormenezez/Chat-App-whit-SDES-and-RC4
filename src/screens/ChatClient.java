@@ -88,8 +88,6 @@ public class ChatClient extends JFrame {
         }
     }
     
-
-    
     private class SendListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {

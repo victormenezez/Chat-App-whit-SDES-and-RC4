@@ -45,13 +45,14 @@ public class ChatServer {
             try{
                 String text;
                 while((text = scanner.nextLine()) != null){
-                    System.out.println(text);
+//                    System.out.println(text);
                     
                     sendToAll(text);
                 }
             } catch(Exception e){}
         }
     }
+    
     public static void main(String[] args) throws IOException {
         new ChatServer();
         ChatClient c1 = new ChatClient("Victor");
